@@ -10,12 +10,17 @@ permissions:
   contents: read
 
 env:
-  CANONICAL_NAME: "Richard Ketelsen"
+  # The canonical ANCHOR is the email + GPG key (the cryptographic trust root,
+  # CD-042 §8.2). The author DISPLAY NAME is cosmetic: GitKraken commits author
+  # as "Richard Ketelsen", GitHub-web commits as "CRAFT Framework" — same email,
+  # same key. So we ENFORCE the email and WARN-not-fail on names outside the
+  # allowlist. (H137 Richard-ratified amendment to DR-5/DR-6.)
   CANONICAL_EMAIL: "richard@craftframework.ai"
+  ALLOWED_NAMES: "Richard Ketelsen|CRAFT Framework"
 
 jobs:
   author-identity:
-    name: Enforce canonical author identity
+    name: Enforce canonical author email (warn on display name)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout (full history for the pushed range)
@@ -39,7 +44,7 @@ jobs:
             echo "head=${{ github.sha }}" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Check every commit author == canonical identity
+      - name: Enforce canonical email; warn on display name
         run: |
           BASE="${{ steps.range.outputs.base }}"
           HEAD="${{ steps.range.outputs.head }}"
@@ -47,19 +52,21 @@ jobs:
           BAD=0
           while IFS='|' read -r sha aname aemail; do
             [ -z "$sha" ] && continue
-            if [ "$aname" != "$CANONICAL_NAME" ] || [ "$aemail" != "$CANONICAL_EMAIL" ]; then
-              echo "::error::Commit $sha authored by '$aname <$aemail>' — must be '$CANONICAL_NAME <$CANONICAL_EMAIL>'"
+            if [ "$aemail" != "$CANONICAL_EMAIL" ]; then
+              echo "::error::Commit $sha author email '$aemail' is not the canonical '$CANONICAL_EMAIL'"
               BAD=$((BAD + 1))
+            elif ! printf '%s' "$aname" | grep -qxE "$ALLOWED_NAMES"; then
+              echo "::warning::Commit $sha display name '$aname' not in allowlist (email OK). Allowed: $ALLOWED_NAMES"
             else
               echo "OK: $sha  $aname <$aemail>"
             fi
           done < <(git log --format='%H|%an|%ae' "${BASE}..${HEAD}")
           if [ "$BAD" -gt 0 ]; then
             echo ""
-            echo "FAIL: $BAD commit(s) violate the canonical-author rule (SP25 operating principle 8)."
+            echo "FAIL: $BAD commit(s) use a non-canonical author email (SP25 operating principle 8 / CD-042 §8.2)."
             exit 1
           fi
-          echo "All commits in range carry the canonical author identity."
+          echo "All commits in range carry the canonical author email."
 
   signature:
     name: Verify commit signatures (WARN until public key wired — Phase 4)
