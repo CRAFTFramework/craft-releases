@@ -1,5 +1,11 @@
 name: CRAFT Author Identity & Signature Gate
 
+# Phase-4 ENFORCING version (SP25 P061-H138). Two jobs:
+#   author-identity : hard-fail on non-canonical author EMAIL; warn on display name (CD-042 §8.2).
+#   signature       : hard-fail on unsigned / bad / uncheckable commit signatures, verified against
+#                     the published CRAFT release key (KEYS/) + GitHub's web-flow key. (Phase-4 flip:
+#                     continue-on-error removed; full verification now enforced — CD-042 §8.2 / §8.3.)
+
 on:
   push:
     branches: [main]
@@ -10,11 +16,6 @@ permissions:
   contents: read
 
 env:
-  # The canonical ANCHOR is the email + GPG key (the cryptographic trust root,
-  # CD-042 §8.2). The author DISPLAY NAME is cosmetic: GitKraken commits author
-  # as "Richard Ketelsen", GitHub-web commits as "CRAFT Framework" — same email,
-  # same key. So we ENFORCE the email and WARN-not-fail on names outside the
-  # allowlist. (H137 Richard-ratified amendment to DR-5/DR-6.)
   CANONICAL_EMAIL: "richard@craftframework.ai"
   ALLOWED_NAMES: "Richard Ketelsen|CRAFT Framework"
 
@@ -36,7 +37,6 @@ jobs:
             echo "head=${{ github.event.pull_request.head.sha }}" >> "$GITHUB_OUTPUT"
           else
             BEFORE="${{ github.event.before }}"
-            # New branch / first push: fall back to checking just the tip commit.
             if [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
               BEFORE="${{ github.sha }}~1"
             fi
@@ -62,28 +62,67 @@ jobs:
             fi
           done < <(git log --format='%H|%an|%ae' "${BASE}..${HEAD}")
           if [ "$BAD" -gt 0 ]; then
-            echo ""
-            echo "FAIL: $BAD commit(s) use a non-canonical author email (SP25 operating principle 8 / CD-042 §8.2)."
+            echo "FAIL: $BAD commit(s) use a non-canonical author email (CD-042 §8.2 / SP25 principle 8)."
             exit 1
           fi
           echo "All commits in range carry the canonical author email."
 
   signature:
-    name: Verify commit signatures (WARN until public key wired — Phase 4)
+    name: Verify commit signatures (ENFORCING — Phase 4)
     runs-on: ubuntu-latest
-    continue-on-error: true   # flip to false at Phase 4 LOCK once the public key is importable in CI
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Report signature status per commit
+
+      - name: Import trusted signing keys
         run: |
-          # %G?: G=good, U=good-untrusted, E=cannot-check(missing key), B=bad, N=none
-          git log --format='%H %G? %an <%ae>' -20 | while read -r sha gstat rest; do
-            case "$gstat" in
-              G|U) echo "SIGNED: $sha ($gstat) $rest" ;;
-              N)   echo "::warning::UNSIGNED commit $sha $rest" ;;
-              B)   echo "::error::BAD signature on $sha $rest" ;;
-              *)   echo "::warning::Signature uncheckable ($gstat) on $sha — public key not present in CI $rest" ;;
-            esac
+          # Trust root: the published CRAFT release key (CD-042 §8.2).
+          gpg --import KEYS/craft-release-signing.pub.asc
+          FPR=$(gpg --list-keys --with-colons richard@craftframework.ai | awk -F: '/^fpr/{print $10; exit}')
+          echo "${FPR}:6:" | gpg --import-ownertrust
+          # GitHub web-flow key: commits made via the GitHub web UI are signed by GitHub on
+          # the canonical email's behalf. Trusting it lets web edits pass while still failing
+          # truly unsigned/bad commits. (Comment out the next block for the strict single-key
+          # posture — every commit would then have to be GitKraken-signed with the CRAFT key.)
+          curl -fsSL https://github.com/web-flow.gpg | gpg --import
+          for wf in $(gpg --list-keys --with-colons noreply@github.com 2>/dev/null | awk -F: '/^fpr/{print $10}'); do
+            echo "${wf}:6:" | gpg --import-ownertrust
           done
+          echo "Trusted CRAFT release key ${FPR} + GitHub web-flow."
+
+      - name: Determine commit range
+        id: range
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "base=${{ github.event.pull_request.base.sha }}" >> "$GITHUB_OUTPUT"
+            echo "head=${{ github.event.pull_request.head.sha }}" >> "$GITHUB_OUTPUT"
+          else
+            BEFORE="${{ github.event.before }}"
+            if [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+              BEFORE="${{ github.sha }}~1"
+            fi
+            echo "base=$BEFORE" >> "$GITHUB_OUTPUT"
+            echo "head=${{ github.sha }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Enforce a good signature on every commit in range
+        run: |
+          BASE="${{ steps.range.outputs.base }}"
+          HEAD="${{ steps.range.outputs.head }}"
+          BAD=0
+          # %G?  G=good  U=good-untrusted  E=cannot-check(missing key)  B=bad  N=none
+          while read -r sha gstat rest; do
+            [ -z "$sha" ] && continue
+            case "$gstat" in
+              G|U) echo "SIGNED  : $sha ($gstat) $rest" ;;
+              N)   echo "::error::UNSIGNED commit $sha $rest"; BAD=$((BAD+1)) ;;
+              B)   echo "::error::BAD signature on $sha $rest"; BAD=$((BAD+1)) ;;
+              *)   echo "::error::Signature uncheckable ($gstat) on $sha — not signed by a trusted key $rest"; BAD=$((BAD+1)) ;;
+            esac
+          done < <(git log --format='%H %G? %an <%ae>' "${BASE}..${HEAD}")
+          if [ "$BAD" -gt 0 ]; then
+            echo "FAIL: $BAD commit(s) lack a good signature from a trusted CRAFT key (CD-042 §8.2/§8.3)."
+            exit 1
+          fi
+          echo "All commits in range carry a good signature from a trusted key."
