@@ -1,0 +1,82 @@
+name: CRAFT Author Identity & Signature Gate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+env:
+  CANONICAL_NAME: "Richard Ketelsen"
+  CANONICAL_EMAIL: "richard@craftframework.ai"
+
+jobs:
+  author-identity:
+    name: Enforce canonical author identity
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (full history for the pushed range)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine commit range
+        id: range
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "base=${{ github.event.pull_request.base.sha }}" >> "$GITHUB_OUTPUT"
+            echo "head=${{ github.event.pull_request.head.sha }}" >> "$GITHUB_OUTPUT"
+          else
+            BEFORE="${{ github.event.before }}"
+            # New branch / first push: fall back to checking just the tip commit.
+            if [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+              BEFORE="${{ github.sha }}~1"
+            fi
+            echo "base=$BEFORE" >> "$GITHUB_OUTPUT"
+            echo "head=${{ github.sha }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Check every commit author == canonical identity
+        run: |
+          BASE="${{ steps.range.outputs.base }}"
+          HEAD="${{ steps.range.outputs.head }}"
+          echo "Checking authorship for range ${BASE}..${HEAD}"
+          BAD=0
+          while IFS='|' read -r sha aname aemail; do
+            [ -z "$sha" ] && continue
+            if [ "$aname" != "$CANONICAL_NAME" ] || [ "$aemail" != "$CANONICAL_EMAIL" ]; then
+              echo "::error::Commit $sha authored by '$aname <$aemail>' — must be '$CANONICAL_NAME <$CANONICAL_EMAIL>'"
+              BAD=$((BAD + 1))
+            else
+              echo "OK: $sha  $aname <$aemail>"
+            fi
+          done < <(git log --format='%H|%an|%ae' "${BASE}..${HEAD}")
+          if [ "$BAD" -gt 0 ]; then
+            echo ""
+            echo "FAIL: $BAD commit(s) violate the canonical-author rule (SP25 operating principle 8)."
+            exit 1
+          fi
+          echo "All commits in range carry the canonical author identity."
+
+  signature:
+    name: Verify commit signatures (WARN until public key wired — Phase 4)
+    runs-on: ubuntu-latest
+    continue-on-error: true   # flip to false at Phase 4 LOCK once the public key is importable in CI
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Report signature status per commit
+        run: |
+          # %G?: G=good, U=good-untrusted, E=cannot-check(missing key), B=bad, N=none
+          git log --format='%H %G? %an <%ae>' -20 | while read -r sha gstat rest; do
+            case "$gstat" in
+              G|U) echo "SIGNED: $sha ($gstat) $rest" ;;
+              N)   echo "::warning::UNSIGNED commit $sha $rest" ;;
+              B)   echo "::error::BAD signature on $sha $rest" ;;
+              *)   echo "::warning::Signature uncheckable ($gstat) on $sha — public key not present in CI $rest" ;;
+            esac
+          done
