@@ -4,27 +4,47 @@
 
 # How to verify a CRAFT release
 
-Every CRAFT release ships two integrity files alongside the payload zip:
+Every CRAFT release ships two integrity files alongside the payload zip(s):
+
 - `SHA256SUMS` — checksums of every file in the release.
-- `SHA256SUMS.asc` — a detached GPG signature of `SHA256SUMS`, signed by
+- `SHA256SUMS.asc` — a detached GPG signature of `SHA256SUMS`, made by
   **Richard Ketelsen <richard@craftframework.ai>**.
 
-Verify in two steps after downloading all three from the GitHub Release:
+## First time only — import the CRAFT public key
 
-```bash
-# 1. Check the files match the checksums
-sha256sum -c SHA256SUMS
-
-# 2. Check the checksum file is authentically signed by CRAFT
-gpg --verify SHA256SUMS.asc SHA256SUMS
-```
-
-First time only — import the CRAFT public key (published in this repo's `KEYS/`):
 ```bash
 gpg --import KEYS/craft-release-signing.pub.asc
 ```
-A good result shows `SHA256SUMS: OK` for every file and a
-`Good signature from "Richard Ketelsen <richard@craftframework.ai>"`.
 
-> Phase status: the live public key is wired at SP25 Phase 4. Until then this page
-> documents the verification flow; the key file lands with the first signed release.
+Confirm the fingerprint matches:
+
+```
+F33B 001E DDAA 0061 0CF4  D6AF 90E8 EC93 25E1 5218
+```
+
+## Every download — verify in two commands
+
+Download the payload, `SHA256SUMS`, and `SHA256SUMS.asc` from the GitHub
+Release into the same folder, then:
+
+```bash
+# 1. the files match the checksums
+sha256sum -c SHA256SUMS
+
+# 2. the checksum file is authentically signed by CRAFT
+gpg --verify SHA256SUMS.asc SHA256SUMS
+```
+
+A good result shows `OK` for every file, and:
+
+```
+Good signature from "Richard Ketelsen <richard@craftframework.ai>"
+```
+
+If either command reports `FAILED` or `BAD signature`, **do not use the
+download** — re-download, and if it still fails, report it via the repo's
+Issues.
+
+> This is consumer-side release verification (artifact trust). It is separate
+> from how CRAFT's agent authenticates to git (CD-039) — different purpose,
+> different audience.
