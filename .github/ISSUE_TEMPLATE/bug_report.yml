@@ -1,0 +1,67 @@
+# SPDX-License-Identifier: LicenseRef-CRAFT-Proprietary
+# (C) 2025-2026 Ketelsen Digital Solutions LLC. All Rights Reserved.
+# CRAFTFramework.ai — Licensed via membership. Terms: craftframework.ai/terms
+name: "🐞 Bug report"
+description: "Something in a published release is broken or behaves wrong."
+title: "[bug] <short summary>"
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        For problems with a **published** release. If you were testing a
+        release *candidate*, use **RC feedback** instead.
+        **A bad or missing signature/checksum is a security matter** — report it
+        privately via `SECURITY.md`, not here.
+  - type: input
+    id: release_version
+    attributes:
+      label: Release-version
+      placeholder: "cowork/v1.0.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: channel
+    attributes:
+      label: Channel
+      options:
+        - stable
+        - rc
+        - demo
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. ...
+        2. ...
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected vs actual
+      placeholder: |
+        Expected: ...
+        Actual: ...
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      placeholder: "OS · app version · anything relevant"
+    validations:
+      required: false
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: Before submitting
+      options:
+        - label: "I verified the download (VERIFY.md) and the signature/checksum matched"
+          required: false
+        - label: "I searched existing issues and this isn't a duplicate"
+          required: false

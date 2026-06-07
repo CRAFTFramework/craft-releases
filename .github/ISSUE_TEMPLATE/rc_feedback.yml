@@ -1,0 +1,70 @@
+# SPDX-License-Identifier: LicenseRef-CRAFT-Proprietary
+# (C) 2025-2026 Ketelsen Digital Solutions LLC. All Rights Reserved.
+# CRAFTFramework.ai — Licensed via membership. Terms: craftframework.ai/terms
+name: "🧪 Release-candidate feedback"
+description: "Tried an rc (or demo) build? Tell us how it went — this is how rc's become stable."
+title: "[rc] <short summary>"
+labels: ["rc-feedback", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for testing a release candidate — community RC feedback directly
+        decides whether an rc is promoted, iterated, or pulled.
+        **Before filing, please [verify your download](../../blob/main/VERIFY.md).**
+        Reporting a security or signature problem? Use the **private** channel
+        in `SECURITY.md`, not this form.
+  - type: input
+    id: release_version
+    attributes:
+      label: Release-version
+      description: "Exact version from the release title / LATEST pointer."
+      placeholder: "cowork/v1.1.0-rc1"
+    validations:
+      required: true
+  - type: dropdown
+    id: channel
+    attributes:
+      label: Channel
+      options:
+        - rc
+        - demo
+        - stable
+    validations:
+      required: true
+  - type: dropdown
+    id: verified
+    attributes:
+      label: Did you verify the download (VERIFY.md)?
+      options:
+        - "Yes — signature + checksum matched"
+        - "No / not sure"
+        - "No — and it did NOT match (stop and say so below)"
+    validations:
+      required: true
+  - type: textarea
+    id: what_happened
+    attributes:
+      label: What did you do, expect, and see?
+      description: "What you did → what you expected → what actually happened."
+      placeholder: |
+        1. Ran ...
+        Expected: ...
+        Actual: ...
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: "OS, app version, and anything needed to reproduce."
+      placeholder: "macOS 15.3 · Claude desktop x.y.z · ..."
+    validations:
+      required: false
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything else
+      description: "Logs, screenshots, severity in your words — optional."
+    validations:
+      required: false

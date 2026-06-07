@@ -1,0 +1,27 @@
+# SPDX-License-Identifier: LicenseRef-CRAFT-Proprietary
+# (C) 2025-2026 Ketelsen Digital Solutions LLC. All Rights Reserved.
+# CRAFTFramework.ai — Licensed via membership. Terms: craftframework.ai/terms
+title: "[rc] "
+labels: ["rc-feedback"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this to **talk through** an rc experience. If you have a concrete,
+        actionable problem we should fix, file an
+        [RC Feedback issue](../../issues/new?template=rc_feedback.yml) instead —
+        issues are what we triage into the next release.
+  - type: input
+    id: release_version
+    attributes:
+      label: Release-version
+      placeholder: "cowork/v1.1.0-rc1"
+    validations:
+      required: true
+  - type: textarea
+    id: impressions
+    attributes:
+      label: How did it go?
+      description: "What worked, what felt off, what you'd want next."
+    validations:
+      required: true
