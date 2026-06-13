@@ -1,20 +1,8 @@
-# SPDX-License-Identifier: LicenseRef-CRAFT-Proprietary
-# (C) 2025-2026 Ketelsen Digital Solutions LLC. All Rights Reserved.
-# CRAFTFramework.ai — Licensed via membership. Terms: craftframework.ai/terms
-#
-# Issue-template chooser config for craft-releases.
-# Blank issues are disabled so every report carries the fields we need to act.
-blank_issues_enabled: false
+blank_issues_enabled: true
 contact_links:
-  - name: Questions & how-to (Q&A)
-    url: https://github.com/CRAFTFramework/craft-releases/discussions/categories/q-a
-    about: Not sure if it's a bug? Ask in Discussions — questions live there, not in Issues.
-  - name: Ideas & suggestions
-    url: https://github.com/CRAFTFramework/craft-releases/discussions/categories/ideas
-    about: Propose an improvement or a feature. Discussion first, before it becomes work.
-  - name: Security or signature problem (report privately)
-    url: https://github.com/CRAFTFramework/craft-releases/security/policy
-    about: A bad/missing signature, a key concern, or a vulnerability — do NOT open a public issue.
-  - name: Announcements & what's new
-    url: https://craftframework.ai/craft-whats-new/
-    about: Release announcements, the changelog, and what's new.
+  - name: Questions & ideas (Discussions)
+    url: https://github.com/CRAFTFramework/craft-releases/discussions
+    about: Ask anything, share feedback, or say how your first 10 minutes went.
+  - name: Verify a download
+    url: https://github.com/CRAFTFramework/craft-releases/blob/main/VERIFY.md
+    about: How to check a release's checksum and signature before trusting it.

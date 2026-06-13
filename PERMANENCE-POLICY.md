@@ -1,6 +1,7 @@
-# SPDX-License-Identifier: LicenseRef-CRAFT-Proprietary
-# (C) 2025-2026 Ketelsen Digital Solutions LLC. All Rights Reserved.
-# CRAFTFramework.ai — Licensed via membership. Terms: craftframework.ai/terms
+<!--
+SPDX-License-Identifier: LicenseRef-CRAFT-Demo
+(C) 2025-2026 Ketelsen Digital Solutions LLC. — Free under the CRAFT Demo license (craftframework.ai/terms)
+-->
 
 # Permanence Policy — craft-releases
 
@@ -17,6 +18,6 @@ craft-recipe-library policy, generalized for releases.
    are announced and dated.
 
 Release-version paths and GitHub Release asset URLs are treated as **immutable**.
-Any amendment to this policy requires a dated subproject entry under CRAFT MASTER.
+Any amendment to this policy is dated and announced before it takes effect.
 
-_Policy v1.0 — SP25 Phase 3 (P061-H137)._
+_Policy v1.0 — governed by CD-042 Distribution Architecture._

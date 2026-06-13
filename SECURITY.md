@@ -1,47 +1,31 @@
-# SPDX-License-Identifier: LicenseRef-CRAFT-Proprietary
-# (C) 2025-2026 Ketelsen Digital Solutions LLC. All Rights Reserved.
-# CRAFTFramework.ai — Licensed via membership. Terms: craftframework.ai/terms
+<!--
+SPDX-License-Identifier: LicenseRef-CRAFT-Demo
+(C) 2025-2026 Ketelsen Digital Solutions LLC. — Free under the CRAFT Demo license (craftframework.ai/terms)
+-->
 
-# Security policy
+# Security
 
-This repo distributes **signed** software. The most important security property here
-is that you can verify a release came from us and wasn't tampered with. If that
-property ever looks broken, we want to know **privately and fast**.
+## Verify every download
 
-## Report privately — never in a public issue
+Every release ships a `SHA256SUMS` and a detached `SHA256SUMS.asc` signed by
+**Richard Ketelsen <richard@craftframework.ai>**. Before trusting a download, run the two checks
+in [VERIFY.md](VERIFY.md):
 
-Email **security@craftframework.ai**. Please do **not** open a public Issue or
-Discussion for any of the following, because public disclosure could put other users
-at risk:
+```
+sha256sum -c SHA256SUMS
+gpg --verify SHA256SUMS.asc SHA256SUMS
+```
 
-- A release whose **signature or checksum does not verify** (see [`VERIFY.md`](VERIFY.md)).
-- Anything suggesting the **signing key** is compromised, or a release was published
-  that we didn't author.
-- A **vulnerability** in a distributed CRAFT product.
-- Any way to make a malicious file appear as a legitimate CRAFT release.
+The public signing key and its fingerprint are in [KEYS/](KEYS/). If either check fails, **do not
+use the download** — re-download, and if it still fails, report it.
 
-Include: the exact release-version + channel, what you observed (signature output,
-hashes), and how to reproduce it. If you can't reach email, contact the maintainer
-through any official CRAFTFramework.ai channel and ask for a private security contact.
+## Reporting a vulnerability
 
-## What happens next
+Found a security problem with a release, the signing setup, or this repo? Email
+**security@craftframework.ai** with details and steps to reproduce. Please report privately first
+rather than opening a public Issue, and give us a reasonable window to respond before disclosure.
 
-- We aim to **acknowledge** your report quickly and keep you updated as we investigate.
-- We will not take public action that exposes the issue before users can protect
-  themselves. Coordinated disclosure is appreciated.
-- If a key or release is affected, we will publish a signed advisory, rotate keys if
-  needed (the new public key lands in [`KEYS/`](KEYS/)), and note it in the changelog.
+## What's in scope
 
-## If a download fails verification
-
-**Stop using the file immediately.** Do not run it. Re-download from this repo's
-official Releases, re-verify per [`VERIFY.md`](VERIFY.md), and if it still fails,
-report it privately as above. A failed verification means the bytes are not what we
-signed — treat them as untrusted.
-
-## Signing & trust
-
-Releases are signed with the CRAFT release key published in [`KEYS/`](KEYS/) (fingerprint
-in `KEYS/README.md`). Verification is a single documented step in `VERIFY.md`. Commits
-to this repo are GPG-signed by the canonical maintainer identity and gated in CI — see
-[`CONTRIBUTING.md`](CONTRIBUTING.md) and `PERMANENCE-POLICY.md`.
+The integrity/authenticity of published releases, the signing key handling, and this repository's
+configuration. The CRAFT framework's internal development tooling is out of scope for this repo.

@@ -1,8 +1,5 @@
-# macOS
 .DS_Store
-.AppleDouble
-.LSOverride
-
-# Editor / OS cruft
+**/.DS_Store
 Thumbs.db
 *.swp
+*.tmp

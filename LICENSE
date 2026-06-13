@@ -1,8 +1,15 @@
-CRAFT Framework — Proprietary License
-SPDX-License-Identifier: LicenseRef-CRAFT-Proprietary
+CRAFT Framework — CRAFT Demo License
+SPDX-License-Identifier: LicenseRef-CRAFT-Demo
 
-(C) 2025-2026 Ketelsen Digital Solutions LLC. All Rights Reserved.
+(C) 2025-2026 Ketelsen Digital Solutions LLC.
 
-CRAFT and the CRAFT Framework are proprietary. Public visibility of this
-repository does NOT grant an open-source license. Use is licensed via
-CRAFTFramework.ai membership. Full terms: https://craftframework.ai/terms
+The releases published in this repository are offered FREE under the CRAFT Demo
+license. You may download, use, and adapt them for your own projects at no cost,
+with no membership required.
+
+Full, canonical terms: https://craftframework.ai/terms
+
+This repository's public visibility does not transfer ownership of the CRAFT name
+or framework. "CRAFT" and "CRAFT Framework" remain marks of Ketelsen Digital
+Solutions LLC. Individual releases may carry their own LICENSE file inside the
+download; that file governs the contents of that release.

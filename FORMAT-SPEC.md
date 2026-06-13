@@ -1,6 +1,7 @@
-# SPDX-License-Identifier: LicenseRef-CRAFT-Proprietary
-# (C) 2025-2026 Ketelsen Digital Solutions LLC. All Rights Reserved.
-# CRAFTFramework.ai — Licensed via membership. Terms: craftframework.ai/terms
+<!--
+SPDX-License-Identifier: LicenseRef-CRAFT-Demo
+(C) 2025-2026 Ketelsen Digital Solutions LLC. — Free under the CRAFT Demo license (craftframework.ai/terms)
+-->
 
 # Format Spec — craft-releases layout (machine-readable)
 
@@ -20,14 +21,16 @@ drifts from this spec.
 ## products/ tree (regex-style)
 ```
 products/<product>/<channel>/<variant>/
-  product  := [a-z][a-z0-9-]*            # e.g. cowork
+  product  := [a-z][a-z0-9-]*            # e.g. craft-for-claude-cowork
   channel  := (stable|rc|demo)           # closed set (CD-042 §3.2)
   variant  := [a-z][a-z0-9-]*            # default when unspecified
 ```
-Within a `<variant>/` directory:
-- `LATEST`            — pointer to the current release-version (text).
-- `<release-version>/` — one immutable directory per release, OR a pointer file to
-  the GitHub Release assets. release-version := `v<major>.<minor>.<patch>[-<channel>N]`.
+This tree is an OPTIONAL human index — the signed bytes ship as GitHub Release assets, not as
+files here. Within a `<variant>/` directory:
+- `README.md`          — pointer to the channel's releases on the Releases page.
+- `LATEST` (optional)  — text pointer to the current release-version for the channel.
+- release-version (the Release tag minus the product prefix) is the canonical CRAFT version:
+  `v.bNNNN.eYYYYMM.LLx` (beta) or `vM.NNNN.eYYYYMM.LLx` (release) — never plain semver.
 
 ## Invariants asserted by CI
 - Every `<channel>` is one of {stable, rc, demo}.
@@ -35,4 +38,4 @@ Within a `<variant>/` directory:
 - Every release directory name parses as a valid release-version.
 - KEYS/ exists and is non-empty before any signed release is indexed.
 
-_Format Spec v1.0 — SP25 Phase 3 (P061-H137); finalized with the signing recipes at Phase 4._
+_Format Spec v1.0 — governed by CD-042 Distribution Architecture._

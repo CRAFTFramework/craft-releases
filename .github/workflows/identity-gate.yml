@@ -1,9 +1,9 @@
 name: CRAFT Author Identity & Signature Gate
 
-# Phase-4 ENFORCING version (SP25 P061-H138). Two jobs:
+# Enforcing author-identity + signature gate (CD-042 §8.2/§8.3). Two jobs:
 #   author-identity : hard-fail on non-canonical author EMAIL; warn on display name (CD-042 §8.2).
 #   signature       : hard-fail on unsigned / bad / uncheckable commit signatures, verified against
-#                     the published CRAFT release key (KEYS/) + GitHub's web-flow key. (Phase-4 flip:
+#                     the published CRAFT release key (KEYS/) + GitHub's web-flow key. (enforcing:
 #                     continue-on-error removed; full verification now enforced — CD-042 §8.2 / §8.3.)
 
 on:
@@ -62,13 +62,13 @@ jobs:
             fi
           done < <(git log --format='%H|%an|%ae' "${BASE}..${HEAD}")
           if [ "$BAD" -gt 0 ]; then
-            echo "FAIL: $BAD commit(s) use a non-canonical author email (CD-042 §8.2 / SP25 principle 8)."
+            echo "FAIL: $BAD commit(s) use a non-canonical author email (CD-042 §8.2)."
             exit 1
           fi
           echo "All commits in range carry the canonical author email."
 
   signature:
-    name: Verify commit signatures (ENFORCING — Phase 4)
+    name: Verify commit signatures (enforcing)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

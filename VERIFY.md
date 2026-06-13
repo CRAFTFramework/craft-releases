@@ -1,6 +1,7 @@
-# SPDX-License-Identifier: LicenseRef-CRAFT-Proprietary
-# (C) 2025-2026 Ketelsen Digital Solutions LLC. All Rights Reserved.
-# CRAFTFramework.ai — Licensed via membership. Terms: craftframework.ai/terms
+<!--
+SPDX-License-Identifier: LicenseRef-CRAFT-Demo
+(C) 2025-2026 Ketelsen Digital Solutions LLC. — Free under the CRAFT Demo license (craftframework.ai/terms)
+-->
 
 # How to verify a CRAFT release
 
