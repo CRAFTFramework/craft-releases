@@ -1,8 +1,0 @@
-blank_issues_enabled: true
-contact_links:
-  - name: Questions & ideas (Discussions)
-    url: https://github.com/CRAFTFramework/craft-releases/discussions
-    about: Ask anything, share feedback, or say how your first 10 minutes went.
-  - name: Verify a download
-    url: https://github.com/CRAFTFramework/craft-releases/blob/main/VERIFY.md
-    about: How to check a release's checksum and signature before trusting it.
