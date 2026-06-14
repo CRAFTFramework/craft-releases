@@ -1,31 +1,49 @@
-<!--
-SPDX-License-Identifier: LicenseRef-CRAFT-Demo
-(C) 2025-2026 Ketelsen Digital Solutions LLC. — Free under the CRAFT Demo license (craftframework.ai/terms)
--->
+# Security policy
 
-# Security
+CRAFT for Claude Cowork is distributed as a **signed** release. The most important security property
+here is that you can verify a download came from us and wasn't tampered with. If that property ever
+looks broken, we want to know **privately and fast**.
 
-## Verify every download
+## Report privately — never in a public thread
 
-Every release ships a `SHA256SUMS` and a detached `SHA256SUMS.asc` signed by
-**Richard Ketelsen <richard@craftframework.ai>**. Before trusting a download, run the two checks
-in [VERIFY.md](VERIFY.md):
+Email **security@craftframework.ai**. Please do **not** post any of the following in a public
+Discussion (or anywhere public), because public disclosure could put other users at risk:
 
-```
-sha256sum -c SHA256SUMS
-gpg --verify SHA256SUMS.asc SHA256SUMS
-```
+- A release whose **signature or checksum does not verify**.
+- Anything suggesting the **signing key** is compromised, or that a release was published that we
+  didn't author.
+- A **vulnerability** in a distributed CRAFT product.
+- Any way to make a malicious file appear as a legitimate CRAFT release.
 
-The public signing key and its fingerprint are in [KEYS/](KEYS/). If either check fails, **do not
-use the download** — re-download, and if it still fails, report it.
+Include: the exact **release tag** (e.g. `craft-for-claude-cowork-v.b0001.p202606.01b`), what you
+observed (the signature/checksum output, the hashes you got), and how to reproduce it. If you can't
+reach email, contact us through any official channel on **craftframework.ai** and ask for a private
+security contact.
 
-## Reporting a vulnerability
+## What happens next
 
-Found a security problem with a release, the signing setup, or this repo? Email
-**security@craftframework.ai** with details and steps to reproduce. Please report privately first
-rather than opening a public Issue, and give us a reasonable window to respond before disclosure.
+- We aim to **acknowledge** your report quickly and keep you updated as we investigate.
+- We won't take public action that exposes the issue before users can protect themselves. Coordinated
+  disclosure is appreciated.
+- If a key or release is affected, we'll publish a signed advisory, rotate keys if needed, and note it
+  in the changelog on craftframework.ai.
 
-## What's in scope
+## If a download fails verification
 
-The integrity/authenticity of published releases, the signing key handling, and this repository's
-configuration. The CRAFT framework's internal development tooling is out of scope for this repo.
+**Stop using the file immediately.** Do not run it. Re-download from the official **GitHub Releases**
+page for this repository, verify it again, and if it still fails, report it privately as above. A
+failed verification means the bytes are not what we signed — treat them as untrusted.
+
+## How we distribute (so you can spot a fake)
+
+- The **only** official place to download CRAFT for Claude Cowork is this repository's **GitHub
+  Releases** page and the download link on **craftframework.ai**. We do **not** distribute builds by
+  direct message, email attachment, or any third-party mirror.
+- Every release is **signed**, and each release lists its checksums so you can verify it.
+- We will **never** ask you to run a script, paste a command, or install a build from somewhere other
+  than the official Releases page. Anyone who does is not us — please report it.
+
+## This is a free public beta
+
+CRAFT for Claude Cowork is currently a **free public beta** — no membership or payment is required to
+download or run it. Terms: **craftframework.ai/terms**.

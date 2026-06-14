@@ -43,9 +43,11 @@ Good signature from "Richard Ketelsen <richard@craftframework.ai>"
 ```
 
 If either command reports `FAILED` or `BAD signature`, **do not use the
-download** — re-download, and if it still fails, report it via the repo's
-Issues.
+download** — re-download from the official
+[Releases page](https://github.com/CRAFTFramework/craft-releases/releases) and verify again. If it still
+fails, **report it privately** — see [`SECURITY.md`](SECURITY.md). A failed signature is a security matter;
+please don't post it in a public thread.
 
-> This is consumer-side release verification (artifact trust). It is separate
-> from how CRAFT's agent authenticates to git (CD-039) — different purpose,
+> This is consumer-side release verification (artifact trust) — it's about trusting a download. It is
+> separate from how the project's tooling authenticates to GitHub behind the scenes — different purpose,
 > different audience.

@@ -46,3 +46,20 @@ Always verify a download — see VERIFY.md (one `sha256sum -c` + one `gpg --veri
 ## Stay current
 
 Announcements: CRAFTFramework.ai blog · /craft-whats-new/ · /craft-changelog/. The website names which version is current per stream; GitHub holds the files.
+
+## Feedback & support
+
+Have feedback, a question, or hit a problem? **The best place to reach us is [CRAFTFramework.ai](https://craftframework.ai).**
+
+- **Questions & how-to** → the guides and tutorial series on craftframework.ai.
+- **Feedback or a bug** → use the feedback link on craftframework.ai. We read everything and it directly shapes the next release.
+- **Announcements & what's new** → [craftframework.ai/craft-whats-new](https://craftframework.ai/craft-whats-new/) and the changelog.
+
+> This is an early **free public beta** and a small project. The fastest, most reliable way to reach the maintainer is through **craftframework.ai**.
+
+## Security & verifying your download
+
+- Only download CRAFT for Claude Cowork from this repo's **[Releases](../../releases)** page or the link on craftframework.ai. We never distribute builds by DM, email attachment, or third-party mirror.
+- Every release is **signed** and lists checksums — please verify before you run it (see VERIFY.md).
+- Found a signature/checksum problem or a vulnerability? **Report it privately** — see [`SECURITY.md`](SECURITY.md), not a public thread.
+- We will **never** ask you to run a script or install a build from anywhere other than the official Releases page. If someone does, it isn't us — please report it.
